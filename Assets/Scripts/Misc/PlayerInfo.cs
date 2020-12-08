@@ -17,8 +17,10 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
     public string pName = "";
     [SerializeField]
     public Slime mySlime = null;
-
+    public MyQuestSaver mqs;
+    public Inventory myInventory = new Inventory();
     private float timer = 5.0f;
+    public int presetElem = -1;
 
     //QuestSaver for PlayerInfo
     public int QuestTimer = 0;
@@ -28,12 +30,12 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         if (slimeDied)
         {
             SlimeEggTapped = false;
@@ -43,10 +45,20 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
         if (mySlime.SlimeWins == 15) mySlime.Evolve();
 
         if(LoggedInFirstTime) timer -= Time.deltaTime;
-        if (timer < 0f) { SaveSystem.SavePlayer(this,this.gameObject.GetComponent<MyQuestSaver>()); timer = 5.0f; Debug.Log("saving"); }
+        if (timer < 0f) { SaveSystem.SavePlayer(this,mqs); timer = 5.0f; Debug.Log("saving"); }
+
+        
+
+        printInventory();
     }
 
-    
+    public void printInventory()
+    {
+        foreach(KeyValuePair<string, int> kv in myInventory.inventoryCount)
+        {
+            Debug.LogWarning(kv.Key + "," + kv.Value);
+        }
+    }
 
     public void SetPName(string PNAME)
     {
@@ -70,7 +82,8 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
             losts = data.losts;
 
             mySlime = data.mySlime;
-
+            myInventory.myInventory = data.inventory.myInventory;
+            myInventory.UpdateInventory();
             //My Quest Saver
             MyQuestSaver mqs = gameObject.GetComponent<MyQuestSaver>();
 

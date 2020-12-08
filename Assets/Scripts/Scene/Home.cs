@@ -18,6 +18,8 @@ public class Home : MonoBehaviour
     private bool EggHatched,SlimeNamed;
     private bool EggTapped = false;
 
+    public ItemDatabase id;
+
     [SerializeField]
     private Button SlimeButton;
     [SerializeField]
@@ -31,6 +33,7 @@ public class Home : MonoBehaviour
 
     private float timer = 15.0f;
     private int myCurrentIteration;
+    private int myCurrentSlimeEvolution;
     //Name Input of Slime
     public Canvas NameCanvas;
     public TextMeshProUGUI NameInput;
@@ -42,8 +45,14 @@ public class Home : MonoBehaviour
     {
         pReference = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
         if (!pReference.LoggedInFirstTime) pReference.LoggedInFirstTime = true;
-        if (pReference.mySlime.getNme() != "") SlimeButton.image.sprite = ssl[pReference.mySlime.slimeIteration - 1].SlimeStage[pReference.mySlime.getSlimeIndex()];
-        else SlimeButton.image.sprite = baseEgg;
+        if (pReference.mySlime.getNme() != "") { SlimeButton.image.sprite = ssl[pReference.mySlime.getSlimeEvolutionStage() - 1].SlimeStage[pReference.mySlime.getSlimeIndex()]; }
+        else
+        {
+            pReference.SlimeEggTapped = false;
+            SlimeButton.image.sprite = baseEgg;
+        }
+        
+        id.BuildItems();
     }
 
     // Update is called once per frame
@@ -62,21 +71,16 @@ public class Home : MonoBehaviour
             SlimeButton.image.sprite = ssl[pReference.mySlime.slimeIteration - 1].SlimeStage[pReference.mySlime.getSlimeIndex()];
             EggHatched = true;
             pReference.SlimeHatched = EggHatched;
-            timer = 3600.0f;
         }
 
         if (pReference.SlimeHatched == true)
         {
-            SlimeName.text = "Slime: " + pReference.mySlime.getNme();
-            OwnerName.text = "Owner: " + pReference.pName;
             atkStat.text = pReference.mySlime.getAtk().ToString();
             defStat.text = pReference.mySlime.getDef().ToString();
             spdStat.text = pReference.mySlime.getSpd().ToString();
         }
         else
         {
-            SlimeName.text = "Slime: ??";
-            OwnerName.text = "Owner: " + pReference.pName;
             atkStat.text = "??";
             defStat.text = "??";
             spdStat.text = "??";
@@ -95,10 +99,12 @@ public class Home : MonoBehaviour
 
     public void SetSlimeName()
     {
-        if (pReference.mySlime.getNme() != "") pReference.mySlime = new Slime(pReference.mySlime, NameInput.text);
-        else pReference.mySlime = new Slime(NameInput.text);
+        if (pReference.mySlime.getNme() != "") pReference.mySlime = new Slime(pReference.mySlime, NameInput.text, pReference.presetElem);
+        else pReference.mySlime = new Slime(NameInput.text, pReference.presetElem);
+        pReference.presetElem = -1;
         myCurrentIteration = pReference.mySlime.slimeIteration;
         SlimeButton.image.sprite = slimeEggImages[pReference.mySlime.getSlimeIndex()];
+        myCurrentSlimeEvolution = pReference.mySlime.getSlimeEvolutionStage();
         NameCanvas.gameObject.SetActive(false);
         SlimeNamed = true;
     }

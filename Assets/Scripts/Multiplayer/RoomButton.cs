@@ -10,7 +10,7 @@ public class RoomButton : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI nameText;
     [SerializeField]
-    private Button MyIcon;
+    private Image MyIcon;
     [SerializeField]
     private Image MyImage;
     
@@ -27,7 +27,7 @@ public class RoomButton : MonoBehaviour
     {
         roomName = nameInput;
         nameText.text = displayName;
-        MyIcon.image.color = SlimeElemColor;
+        MyIcon.color = SlimeElemColor;
         MyImage.sprite = MySlimeSprite;
     }
 }

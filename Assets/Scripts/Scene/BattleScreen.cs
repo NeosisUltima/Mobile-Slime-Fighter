@@ -14,7 +14,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 
 
-public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
+public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks, IConnectionCallbacks
 {
     /*BattleScreen Script
      * 
@@ -25,13 +25,15 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
      */
 
     [SerializeField]
-    private GameObject p1SlimePanel, p2SlimePanel,DisconnectPanel, WinPanel,LosePanel,HelpPanel;
+    private GameObject p1SlimePanel, p2SlimePanel,DisconnectPanel, WinPanel,LosePanel,HelpPanel,PlayerDisconnect, QuitPanel;
     [SerializeField]
     private TextMeshProUGUI infoText;
     [SerializeField]
     private CanvasGroup buttons;
     [SerializeField]
     private Button helpBtn;
+    [SerializeField]
+    private ItemDatabase idata;
     private BattlePanel p1, p2;
     private bool p1PanelSet, p2PanelSet = false;
     private bool p1MoveMade, p2MoveMade;
@@ -66,6 +68,8 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
 
         if (PhotonNetwork.LocalPlayer.ActorNumber == 1) p2.MyCurrentHealthText.gameObject.SetActive(false);
         else p1.MyCurrentHealthText.gameObject.SetActive(false);
+
+        idata.BuildItems();
     }
 
     // Update is called once per frame
@@ -138,6 +142,8 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
     [SerializeField]
     private int theirMove = -1;
 
+    private string myChoice, theirChoice = "";
+
     private int MyPanelNum = 0;
     private Results myResult;
 
@@ -146,41 +152,41 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
     private int stradded, defadded, spdadded;
     public void ChooseRock()
     {
-        this.MakeMove(ROCK);
+        this.MakeMove(ROCK,"ROCK");
     }
 
 
     public void ChoosePaper()
     {
-        this.MakeMove(PAPER);
+        this.MakeMove(PAPER,"PAPER");
     }
 
 
     public void ChooseScissors()
     {
-        this.MakeMove(SCISSORS);
+        this.MakeMove(SCISSORS,"SCISSORS");
     }
 
-    public void MakeMove(int selection)
+    public void MakeMove(int selection,string seltxt)
     {
         this.myMove = selection;
+        this.myChoice = seltxt;
         p1MoveMade = true;
         buttons.interactable = false;
-        pv.RPC("SendMove", RpcTarget.Others, this.myMove);
+        pv.RPC("SendMove", RpcTarget.Others, this.myMove,this.myChoice);
         infoText.text = "Waiting for Opponent...";
     }
 
     [PunRPC]
-    public void SendMove(int choice)
+    public void SendMove(int choice,string choicetxt)
     {
         if (this.theirMove == -1)
         {
             this.theirMove = choice;
+            this.theirChoice = choicetxt;
             p2MoveMade = true;
         }
     }
-
-    
 
     public void FindWinner()
     {
@@ -198,12 +204,17 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
     //IENumerators
     public IEnumerator ShowResults()
     {
+        if (PhotonNetwork.LocalPlayer.ActorNumber == 1) { p1.myChoiceUpdate(this.myChoice); p2.myChoiceUpdate(this.theirChoice); }
+        else { p2.myChoiceUpdate(this.myChoice); p1.myChoiceUpdate(this.theirChoice); }
         infoText.text = this.myResult == Results.Win ? "You attack the oponent." : "You have been attacked.";
         this.myResult = Results.None;
         yield return new WaitForSeconds(5.0f);
         infoText.text = "Choose an attack.";
         buttons.interactable = true;
+        p1.myChoiceUpdate("");
+        p2.myChoiceUpdate("");
         yield return new WaitForSeconds(1.0f);
+        
     }
 
     public override void OnEnable()
@@ -366,9 +377,33 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
             updateStats.Add("PlayerSlimeDefense", pi.mySlime.getDef() + defadded);
             updateStats.Add("PlayerSlimeSpeed", pi.mySlime.getSpd() + spdadded);
 
+            int randItemDrops = Random.Range(0, 5);
+
+            for(int i = 0; i < randItemDrops; i++)
+            {
+                pi.myInventory.Add(idata.GiveItem());
+            }
+
+            randItemDrops = Random.Range(0, 50);
+            if(randItemDrops >= 45)
+            {
+                if((int)PhotonNetwork.LocalPlayer.GetNext().CustomProperties["PlayerSlimeElement"] == 0)
+                    pi.myInventory.Add(idata.GiveItem(15));
+                else if ((int)PhotonNetwork.LocalPlayer.GetNext().CustomProperties["PlayerSlimeElement"] == 1)
+                    pi.myInventory.Add(idata.GiveItem(16));
+                else if ((int)PhotonNetwork.LocalPlayer.GetNext().CustomProperties["PlayerSlimeElement"] == 2)
+                    pi.myInventory.Add(idata.GiveItem(17));
+                else if ((int)PhotonNetwork.LocalPlayer.GetNext().CustomProperties["PlayerSlimeElement"] == 3)
+                    pi.myInventory.Add(idata.GiveItem(18));
+                else if ((int)PhotonNetwork.LocalPlayer.GetNext().CustomProperties["PlayerSlimeElement"] == 4)
+                    pi.myInventory.Add(idata.GiveItem(19));
+                else if ((int)PhotonNetwork.LocalPlayer.GetNext().CustomProperties["PlayerSlimeElement"] == 5)
+                    pi.myInventory.Add(idata.GiveItem(20));
+            }
+
             PhotonNetwork.LocalPlayer.SetCustomProperties(updateStats);
 
-            this.WinPanel.GetComponent<WinPanel>().wintext.text += "\n Strength +" + stradded + "\n Defense +" + defadded + "\n Speed +" + spdadded;
+            this.WinPanel.GetComponent<WinPanel>().wintext.text += "\n Strength +" + stradded + "\n Defense +" + defadded + "\n Speed +" + spdadded + "\nYou also recieved a few items...";
         }
     }
 
@@ -381,7 +416,7 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
     public override void OnLeftRoom()
     {
         base.OnLeftRoom();
-        LeavingRoom();
+        DisconnectPanel.SetActive(true);
     }
 
     public void LeavingRoom()
@@ -425,6 +460,13 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
         SceneManager.LoadScene("Fight");
     }
 
+    public void ReturnToHomeDisconnected()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.LeaveLobby();
+        SceneManager.LoadScene("Main");
+    }
+
     public void ReturnToHome()
     {
         
@@ -444,6 +486,42 @@ public class BattleScreen : MonoBehaviourPunCallbacks, IInRoomCallbacks
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LeaveLobby();
         SceneManager.LoadScene("Main");
+    }
+
+    public int CheckIfLower(int num)
+    {
+        if (num > 5) return num;
+        else return 5;
+    }
+
+    public void QuitMatch()
+    {
+        QuitPanel.SetActive(true);
+    }
+
+    public void OnQuitYes()
+    {
+        PlayerDisconnect.SetActive(true);
+        LostGame = true;
+
+        Hashtable updateStats = new Hashtable();
+
+        int myAtk = (int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerSlimeAttack"];
+        int myDef = (int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerSlimeDefense"];
+        int mySpd = (int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerSlimeSpeed"];
+
+        pi.losts++;
+        pi.mySlime.setAtk(CheckIfLower(pi.mySlime.getAtk() - Random.Range(1, (myAtk / 3))));
+        pi.mySlime.setDef(CheckIfLower(pi.mySlime.getDef() - Random.Range(1, (myDef / 3))));
+        pi.mySlime.setSpd(CheckIfLower(pi.mySlime.getSpd() - Random.Range(1, (mySpd / 3))));
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(updateStats);
+        
+    }
+
+    public void OnQuitNo()
+    {
+        QuitPanel.SetActive(false);
     }
 
     IEnumerator rejoinLobby()

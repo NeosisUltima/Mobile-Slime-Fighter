@@ -16,7 +16,7 @@ public class PlayerData
     public Quest thisQuest;
     public float timer;
     public bool leftAdventure, timerActivated, inQuest;
-
+    public Inventory inventory;
     public PlayerData()
     {
         wins = -1;
@@ -37,6 +37,8 @@ public class PlayerData
         losts = player.losts;
         pName = player.pName;
         mySlime = player.mySlime;
+
+        inventory = player.myInventory;
 
         //MyQuestSaver
         thisQuest = mqs.thisQuest;

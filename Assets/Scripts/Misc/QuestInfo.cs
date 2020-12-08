@@ -93,8 +93,8 @@ public class QuestInfo : MonoBehaviour
         pi.mySlime.setAtk(pi.mySlime.getAtk() + StrReward);
         pi.mySlime.setDef(pi.mySlime.getAtk() + DefReward);
         pi.mySlime.setSpd(pi.mySlime.getAtk() + SpdReward);
-        pi.myCurrentQuest = null;
-        mqs.thisQuest = null;
+        pi.myCurrentQuest = new Quest();
+        mqs.thisQuest = new Quest();
         pi.questActive = false;
     }
 
@@ -103,8 +103,8 @@ public class QuestInfo : MonoBehaviour
         QCancelled = true;
         QStart = false;
         QEnded = false;
-        pi.myCurrentQuest = null;
-        mqs.thisQuest = null;
+        pi.myCurrentQuest = new Quest();
+        mqs.thisQuest = new Quest();
         mqs.inQuest = false;
         pi.questActive = false;
         CancelBtn.gameObject.SetActive(false);

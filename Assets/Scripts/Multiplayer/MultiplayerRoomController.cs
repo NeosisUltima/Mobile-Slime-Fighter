@@ -32,7 +32,7 @@ public class MultiplayerRoomController : MonoBehaviourPunCallbacks, IInRoomCallb
     [SerializeField]
     private Image p1SlimeImage, p2SlimeImage;
     [SerializeField]
-    private TextMeshProUGUI p1user, p2user, p1wins, p2wins, p1loss, p2loss;
+    private TextMeshProUGUI p1user, p2user, p1wins, p2wins, p1loss, p2loss,p1SlimeStats,p2SlimeStats;
     [SerializeField]
     private List<BattlerInfo> myRoomBattlers = new List<BattlerInfo>();
     public PlayerData myInfo = new PlayerData();
@@ -144,6 +144,7 @@ public class MultiplayerRoomController : MonoBehaviourPunCallbacks, IInRoomCallb
                     p1user.text = (string)player.CustomProperties["PlayerName"];
                     p1wins.text = "Wins: " + player.CustomProperties["PlayerWins"];
                     p1loss.text = "Loss: " + player.CustomProperties["PlayerLosses"];
+                    p1SlimeStats.text = "Atk: " + player.CustomProperties["PlayerSlimeAttack"] + "\nDef: " + player.CustomProperties["PlayerSlimeDefense"] + "\nSpd: " + player.CustomProperties["PlayerSlimeSpeed"];
                     p1SlimeImage.sprite = ssl[(int)player.CustomProperties["PlayerSlimeEvolStage"]-1].SlimeStage[(int)player.CustomProperties["PlayerSlimeElement"]];
                     p1Added = true;
                 }
@@ -152,6 +153,7 @@ public class MultiplayerRoomController : MonoBehaviourPunCallbacks, IInRoomCallb
                     p2user.text = (string)player.CustomProperties["PlayerName"];
                     p2wins.text = "Wins: " + player.CustomProperties["PlayerWins"];
                     p2loss.text = "Loss: " + player.CustomProperties["PlayerLosses"];
+                    p2SlimeStats.text = "Atk: " + player.CustomProperties["PlayerSlimeAttack"] + "\nDef: " + player.CustomProperties["PlayerSlimeDefense"] + "\nSpd: " + player.CustomProperties["PlayerSlimeSpeed"];
                     p2SlimeImage.sprite = ssl[(int)player.CustomProperties["PlayerSlimeEvolStage"]-1].SlimeStage[(int)player.CustomProperties["PlayerSlimeElement"]];
                     roomPanelCoverP2.SetActive(false);
                     p2Added = true;

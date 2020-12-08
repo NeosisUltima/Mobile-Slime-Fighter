@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2865200234978589506}
   - component: {fileID: 2128217881625378778}
   m_Layer: 5
-  m_Name: Start
+  m_Name: Use
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.021484375}
-  m_SizeDelta: {x: 97.8725, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 148.84149, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &3938524058742816527
 CanvasRenderer:
@@ -119,8 +119,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: StartQuest
+      - m_Target: {fileID: 9105523902891217096}
+        m_MethodName: UseItem
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60.55
+  m_fontSize: 72
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -698,8 +698,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 96.606, y: -44.286}
-  m_SizeDelta: {x: 97.06058, y: 24.405518}
+  m_AnchoredPosition: {x: 82.3, y: -44.286}
+  m_SizeDelta: {x: 68.45993, y: 24.405518}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1311801751873007277
 CanvasRenderer:
@@ -780,7 +780,10 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4791840186320205276}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls: [{m_Target: {fileID: 9105523902891217096}, m_MethodName: SubtractAmount,
+          m_Mode: 1, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: 'UnityEngine.Object,
+              UnityEngine', m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: '',
+            m_BoolArgument: 0}, m_CallState: 2}]
 --- !u!1 &3542162753139542650
 GameObject:
   m_ObjectHideFlags: 0
@@ -974,6 +977,11 @@ MonoBehaviour:
   useButton: {fileID: 2128217881625378778}
   addButton: {fileID: 774058049372854640}
   subButton: {fileID: 8047575363872011577}
+  MaxItemInInventory: 0
+  thisItem:
+    itemName: 
+    desc: 
+    weight: 0
 --- !u!1 &8308818368451118496
 GameObject:
   m_ObjectHideFlags: 0
@@ -1008,8 +1016,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 148.08, y: 12.192}
-  m_SizeDelta: {x: 200, y: 88.55029}
+  m_AnchoredPosition: {x: 122.6, y: 12.192}
+  m_SizeDelta: {x: 149.01624, y: 88.55029}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1345314871735053135
 CanvasRenderer:
@@ -1143,8 +1151,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 199.55, y: -44.286}
-  m_SizeDelta: {x: 97.06058, y: 24.405518}
+  m_AnchoredPosition: {x: 162.2, y: -44.286}
+  m_SizeDelta: {x: 69.715065, y: 24.405518}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2992523541799673601
 CanvasRenderer:
@@ -1225,4 +1233,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8464505464972825594}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls: [{m_Target: {fileID: 9105523902891217096}, m_MethodName: AddAmount,
+          m_Mode: 1, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: 'UnityEngine.Object,
+              UnityEngine', m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: '',
+            m_BoolArgument: 0}, m_CallState: 2}]
